@@ -1,0 +1,1 @@
+class Onboarding3Model {}
