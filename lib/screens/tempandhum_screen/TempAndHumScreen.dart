@@ -197,7 +197,7 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
                                 "Ventillation": true
                               });
                             }),
-                            text: "Power on the ventilator ",
+                            text: "Slide to power on ",
                             innerColor: Colors.green,
                             outerColor: ColorConstant.gray500,
                             elevation: 3,

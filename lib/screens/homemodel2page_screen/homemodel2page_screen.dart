@@ -3,11 +3,15 @@ import 'dart:convert';
 import 'package:agronomek_app/core/app_export.dart';
 import 'package:agronomek_app/screens/homemodel2page_screen/models/homemodel2page_model.dart';
 import 'package:agronomek_app/screens/homepage_screen/homepage_screen.dart';
+import 'package:agronomek_app/screens/leafdiseases_screen/leaf_diseases_screen.dart';
 import 'package:agronomek_app/screens/map_screen/map_screen.dart';
 import 'package:agronomek_app/screens/profile_update_screen/profile_update_screen.dart';
 import 'package:agronomek_app/screens/tempandhum_screen/TempAndHumScreen.dart';
 import 'package:agronomek_app/screens/water_screen/WaterScreen.dart';
+import 'package:agronomek_app/screens/weatherReport_screen/binding/WeatherBinding.dart';
+import 'package:agronomek_app/screens/weatherReport_screen/weather_report_screen.dart';
 import 'package:agronomek_app/theme/app_style.dart';
+import 'package:intl/intl.dart';
 
 import 'controller/homemodel2page_controller.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +21,7 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class Homemodel2pageScreen extends GetView {
   final String QRCode;
@@ -32,6 +37,8 @@ class Homemodel2pageScreen extends GetView {
   var valueOfTemp = "";
   var valueOfHum = "";
   var urlImage = "";
+  final Uri _url = Uri.parse('https://flutter.dev');
+  
   @override
   Widget build(BuildContext context) {
     final Homemodel2pageController homemodel2pageController =
@@ -47,8 +54,8 @@ class Homemodel2pageScreen extends GetView {
         }
         print("Bloc1 !!");
         print(this.tokenOfUser);
-        var urlSendForInformationUser =
-            Uri.parse('http://37.59.204.222/api/user/getAllInformationOfUser/');
+        var urlSendForInformationUser = Uri.parse(
+            'http://37.59.204.222:85/api/user/getAllInformationOfUser/');
 
         var responseOfInformationUser = await http.post(
             urlSendForInformationUser,
@@ -71,7 +78,7 @@ class Homemodel2pageScreen extends GetView {
 
         if (idGreenHouse.isEmpty == false) {
           var urlSendForSomeInformationOfHomePage = Uri.parse(
-              'http://37.59.204.222/api/greenHouse/getInformationForHomePageWithoutQRCode/');
+              'http://37.59.204.222:85/api/greenHouse/getInformationForHomePageWithoutQRCode/');
 
           var responseOfSomeInformationOfHomePage = await http
               .post(urlSendForSomeInformationOfHomePage, body: {
@@ -96,10 +103,10 @@ class Homemodel2pageScreen extends GetView {
         } else {
           var codeQRInsatance;
           var urlSendMatchingGreenHouse = Uri.parse(
-              'http://37.59.204.222/api/greenHouse/matchTheGreenHouseAndUser/');
+              'http://37.59.204.222:85/api/greenHouse/matchTheGreenHouseAndUser/');
 
           var urlSendForSomeInformationOfHomePage = Uri.parse(
-              'http://37.59.204.222/api/greenHouse/getInformationForHomePage/');
+              'http://37.59.204.222:85/api/greenHouse/getInformationForHomePage/');
 
           if (this.QRCode.isEmpty) {
             CoolAlert.show(
@@ -295,7 +302,8 @@ class Homemodel2pageScreen extends GetView {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    "Mon 13/07/22",
+                                                    DateFormat.yMMMEd().format(DateTime.now()).toString(),
+                                                    // DateTime.now().toString(),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     textAlign: TextAlign.left,
@@ -751,7 +759,7 @@ class Homemodel2pageScreen extends GetView {
                                                                 child: Obx(
                                                                     () => Image(
                                                                           image:
-                                                                              NetworkImage('http://37.59.204.222/${homemodel2pageController.imgUser.value}'),
+                                                                              NetworkImage('http://37.59.204.222:85/${homemodel2pageController.imgUser.value}'),
                                                                           height:
                                                                               getSize(47.00),
                                                                           width:
@@ -958,7 +966,7 @@ class Homemodel2pageScreen extends GetView {
                                                       "Turn on the water pompe ");
                                                   var urlActivationWaterPompe =
                                                       Uri.parse(
-                                                          'http://37.59.204.222/api/greenHouse/activationWaterControlWithAnSpecificUser');
+                                                          'http://37.59.204.222:85/api/greenHouse/activationWaterControlWithAnSpecificUser');
                                                   var responseActivationWaterPompe =
                                                       await http.post(
                                                           urlActivationWaterPompe,
@@ -1031,7 +1039,7 @@ class Homemodel2pageScreen extends GetView {
                                                               'The id of greenHouse: $idGreenHouse');
                                                           var urlDeActivationWaterPompe =
                                                               Uri.parse(
-                                                                  'http://37.59.204.222/api/greenHouse/deActivationWaterControlWithAnSpecificUser');
+                                                                  'http://37.59.204.222:85/api/greenHouse/deActivationWaterControlWithAnSpecificUser');
                                                           var responseDeActivationWaterPompe =
                                                               await http.post(
                                                                   urlDeActivationWaterPompe,
@@ -1383,31 +1391,51 @@ class Homemodel2pageScreen extends GetView {
                                                     ],
                                                   ),
                                                 ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: getHorizontalSize(
-                                                      103.50,
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    if (this
+                                                            .tokenOfUser
+                                                            .isEmpty ==
+                                                        true) {
+                                                      CoolAlert.show(
+                                                          context: context,
+                                                          type: CoolAlertType
+                                                              .error,
+                                                          text:
+                                                              "Please check you authentication");
+                                                    } else {
+                                                      if (!await launchUrl(
+                                                          _url)) {
+                                                        throw 'Could not launch $_url';
+                                                      }
+                                                    }
+                                                  },
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left: getHorizontalSize(
+                                                        103.50,
+                                                      ),
+                                                      top: getVerticalSize(
+                                                        4.00,
+                                                      ),
+                                                      bottom: getVerticalSize(
+                                                        4.00,
+                                                      ),
                                                     ),
-                                                    top: getVerticalSize(
-                                                      4.00,
-                                                    ),
-                                                    bottom: getVerticalSize(
-                                                      4.00,
+                                                    child: Container(
+                                                      height: getVerticalSize(
+                                                        16.00,
+                                                      ),
+                                                      width: getHorizontalSize(
+                                                        8.00,
+                                                      ),
+                                                      child: SvgPicture.asset(
+                                                        ImageConstant.imgShape4,
+                                                        fit: BoxFit.fill,
+                                                      ),
                                                     ),
                                                   ),
-                                                  child: Container(
-                                                    height: getVerticalSize(
-                                                      16.00,
-                                                    ),
-                                                    width: getHorizontalSize(
-                                                      8.00,
-                                                    ),
-                                                    child: SvgPicture.asset(
-                                                      ImageConstant.imgShape4,
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                  ),
-                                                ),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -1447,65 +1475,97 @@ class Homemodel2pageScreen extends GetView {
                                                         padding:
                                                             EdgeInsets.only(
                                                           top: getVerticalSize(
-                                                            3.00,
+                                                            4.00,
                                                           ),
                                                           bottom:
                                                               getVerticalSize(
-                                                            3.00,
+                                                            5.00,
                                                           ),
                                                         ),
                                                         child: Container(
-                                                          height:
-                                                              getVerticalSize(
-                                                            18.00,
-                                                          ),
-                                                          width:
-                                                              getHorizontalSize(
-                                                            14.00,
-                                                          ),
-                                                          child:
-                                                          //     SvgPicture.asset(
-                                                          //   ImageConstant
-                                                          //       .imgShape5,
-                                                          //   fit: BoxFit.fill,
-                                                          // ),
-                                                          Icon(
-                                                            Icons.energy_savings_leaf_outlined,
-                                                            color: Colors.grey,
-                                                          )
-                                                        ),
+                                                            height:
+                                                                getVerticalSize(
+                                                              15.00,
+                                                            ),
+                                                            width:
+                                                                getHorizontalSize(
+                                                              16.88,
+                                                            ),
+                                                            child:
+                                                                //     SvgPicture.asset(
+                                                                //   ImageConstant
+                                                                //       .imgShape5,
+                                                                //   fit: BoxFit.fill,
+                                                                // ),
+                                                                Icon(
+                                                              Icons
+                                                                  .energy_savings_leaf_outlined,
+                                                              color:
+                                                                  Colors.grey,
+                                                            )),
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left:
-                                                              getHorizontalSize(
-                                                            61.62,
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          if (idGreenHouse
+                                                                  .toString()
+                                                                  .isEmpty ==
+                                                              true) {
+                                                            CoolAlert.show(
+                                                                context:
+                                                                    context,
+                                                                type:
+                                                                    CoolAlertType
+                                                                        .error,
+                                                                text:
+                                                                    "Please select an green House");
+                                                          } else {
+                                                            print(
+                                                                "Go to the leaf diseases screen");
+
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            LeafDiseasesScreen(
+                                                                              idGreenHouse: this.idGreenHouse,
+                                                                              title: "",
+                                                                            )));
+                                                          }
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            left:
+                                                                getHorizontalSize(
+                                                              61.62,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        child: Text(
-                                                          "Leaf Disease",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: AppStyle
-                                                              .textstyleamaranthregular20HomePageModel2
-                                                              .copyWith(
-                                                            fontSize:
-                                                                getFontSize(
-                                                              20,
+                                                          child: Text(
+                                                            "Leaf Disease",
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: AppStyle
+                                                                .textstyleamaranthregular20HomePageModel2
+                                                                .copyWith(
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                20,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
+                                                      )
                                                     ],
                                                   ),
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                     left: getHorizontalSize(
-                                                      60.00,
+                                                      68.00,
                                                     ),
                                                     top: getVerticalSize(
                                                       4.00,
@@ -1526,7 +1586,7 @@ class Homemodel2pageScreen extends GetView {
                                                       fit: BoxFit.fill,
                                                     ),
                                                   ),
-                                                ),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -1566,7 +1626,9 @@ class Homemodel2pageScreen extends GetView {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  WaterScreen(idGreenHouse: this.idGreenHouse)));
+                                                                  WaterScreen(
+                                                                      idGreenHouse:
+                                                                          this.idGreenHouse)));
                                                     }
                                                   },
                                                   child: Padding(
@@ -1926,7 +1988,7 @@ class Homemodel2pageScreen extends GetView {
                                                   30.00,
                                                 ),
                                                 top: getVerticalSize(
-                                                  40.00,
+                                                  60.00,
                                                 ),
                                                 right: getHorizontalSize(
                                                   30.00,
@@ -2181,22 +2243,31 @@ class Homemodel2pageScreen extends GetView {
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: getHorizontalSize(
-                                                      45.00,
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    print(
+                                                        "Go to the warer report 2");
+                                                    Get.toNamed(AppRoutes
+                                                        .weatherReportScreen);
+                                                  },
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left: getHorizontalSize(
+                                                        45.00,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  child: Text(
-                                                    "Weather report",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.center,
-                                                    style: AppStyle
-                                                        .textstyleamaranthregular20HomePageModel2
-                                                        .copyWith(
-                                                      fontSize: getFontSize(
-                                                        20,
+                                                    child: Text(
+                                                      "Weather report",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: AppStyle
+                                                          .textstyleamaranthregular20HomePageModel2
+                                                          .copyWith(
+                                                        fontSize: getFontSize(
+                                                          20,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -2414,7 +2485,7 @@ class Homemodel2pageScreen extends GetView {
 
                                                             var urlSendInfoPosition =
                                                                 Uri.parse(
-                                                                    'http://37.59.204.222/api/greenHouse/getLatAndLongOfOneUser');
+                                                                    'http://37.59.204.222:85/api/greenHouse/getLatAndLongOfOneUser');
                                                             var responseInfoPosition =
                                                                 await http.post(
                                                                     urlSendInfoPosition,
@@ -2436,6 +2507,7 @@ class Homemodel2pageScreen extends GetView {
                                                               var resultOfGreenHouseName =
                                                                   body2[
                                                                       'Id_AgronoMek'];
+                                                              var activationStatus = body2['Status_Activation'];
                                                               Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
@@ -2447,7 +2519,9 @@ class Homemodel2pageScreen extends GetView {
                                                                           listOfLatAndLong:
                                                                               resultOfPosition,
                                                                           resultOfGreenHouseName:
-                                                                              resultOfGreenHouseName)));
+                                                                              resultOfGreenHouseName,
+                                                                          activationStatus: activationStatus
+                                                                              )));
                                                             } else {
                                                               Navigator.push(
                                                                   context,
@@ -2460,7 +2534,8 @@ class Homemodel2pageScreen extends GetView {
                                                                           listOfLatAndLong:
                                                                               "",
                                                                           resultOfGreenHouseName:
-                                                                              "")));
+                                                                              "",
+                                                                          activationStatus: "")));
                                                             }
                                                           },
                                                           child: Padding(
@@ -2668,70 +2743,89 @@ class Homemodel2pageScreen extends GetView {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .only(
-                                                                  left:
-                                                                      getHorizontalSize(
-                                                                    10.00,
-                                                                  ),
-                                                                  right:
-                                                                      getHorizontalSize(
-                                                                    10.00,
-                                                                  ),
-                                                                ),
-                                                                child:
-                                                                    Container(
-                                                                  height:
-                                                                      getVerticalSize(
-                                                                    24.04,
-                                                                  ),
-                                                                  width:
-                                                                      getHorizontalSize(
-                                                                    21.37,
-                                                                  ),
-                                                                  child:
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                    ImageConstant
-                                                                        .imgShape15,
-                                                                    fit: BoxFit
-                                                                        .fill,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerLeft,
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  print(
+                                                                      "Go to the Weather report");
+                                                                  Get.toNamed(
+                                                                      AppRoutes
+                                                                          .weatherReportScreen);
+                                                                },
                                                                 child: Padding(
                                                                   padding:
                                                                       EdgeInsets
                                                                           .only(
-                                                                    top:
-                                                                        getVerticalSize(
-                                                                      8.96,
+                                                                    left:
+                                                                        getHorizontalSize(
+                                                                      10.00,
+                                                                    ),
+                                                                    right:
+                                                                        getHorizontalSize(
+                                                                      10.00,
                                                                     ),
                                                                   ),
-                                                                  child: Text(
-                                                                    "Weather report",
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .left,
-                                                                    style: AppStyle
-                                                                        .textstyleamaranthregular10HomePage2
-                                                                        .copyWith(
-                                                                      fontSize:
-                                                                          getFontSize(
-                                                                        10,
-                                                                      ),
+                                                                  child:
+                                                                      Container(
+                                                                    height:
+                                                                        getVerticalSize(
+                                                                      24.04,
+                                                                    ),
+                                                                    width:
+                                                                        getHorizontalSize(
+                                                                      21.37,
+                                                                    ),
+                                                                    child: SvgPicture
+                                                                        .asset(
+                                                                      ImageConstant
+                                                                          .imgShape15,
+                                                                      fit: BoxFit
+                                                                          .fill,
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  print(
+                                                                      "Go to the Weather report");
+                                                                  Get.toNamed(
+                                                                      AppRoutes
+                                                                          .weatherReportScreen);
+                                                                },
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .only(
+                                                                      top:
+                                                                          getVerticalSize(
+                                                                        8.96,
+                                                                      ),
+                                                                    ),
+                                                                    child: Text(
+                                                                      "Weather report",
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .left,
+                                                                      style: AppStyle
+                                                                          .textstyleamaranthregular10HomePage2
+                                                                          .copyWith(
+                                                                        fontSize:
+                                                                            getFontSize(
+                                                                          10,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
                                                             ],
                                                           ),
                                                         ),
@@ -2936,10 +3030,10 @@ class Homemodel2pageScreen extends GetView {
   // void showAlert(BuildContext context) async {
   //   var codeQRInsatance;
   //   var urlSendMatchingGreenHouse =
-  //       Uri.parse('http://37.59.204.222/api/greenHouse/matchTheGreenHouseAndUser/');
+  //       Uri.parse('http://37.59.204.222:85/api/greenHouse/matchTheGreenHouseAndUser/');
 
   //   var urlSendForSomeInformationOfHomePage =
-  //       Uri.parse('http://37.59.204.222/api/greenHouse/getInformationForHomePage/');
+  //       Uri.parse('http://37.59.204.222:85/api/greenHouse/getInformationForHomePage/');
 
   //   if (this.QRCode.isEmpty) {
   //     CoolAlert.show(
@@ -2999,4 +3093,10 @@ class Homemodel2pageScreen extends GetView {
   //       }
   //   }
   // }
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw 'Could not launch $_url';
+    }
+  }
 }

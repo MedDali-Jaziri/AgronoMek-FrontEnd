@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:agronomek_app/core/app_export.dart';
 import 'package:agronomek_app/screens/homemodel2page_screen/homemodel2page_screen.dart';
 import 'package:cool_alert/cool_alert.dart';
@@ -6,45 +8,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class MapScreen extends StatefulWidget {
   final listOfLatAndLong;
   final resultOfGreenHouseName;
   final tokenOfUser;
   final varLogin;
-  const MapScreen({Key? key,this.varLogin, this.tokenOfUser, this.listOfLatAndLong, this.resultOfGreenHouseName}) : super(key: key);
+  final activationStatus;
+  const MapScreen({Key? key,this.varLogin, this.tokenOfUser, this.listOfLatAndLong, this.resultOfGreenHouseName, this.activationStatus}) : super(key: key);
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
+
 
 class _MapScreenState extends State<MapScreen> {
   final List<Map<String, dynamic>> myList = <Map<String, dynamic>>[];
 
   final Map<String, Marker> _markers = {};
 
+  // String activationStatus="";
+
+
+  late DatabaseReference _databaseReference;
+
   Future<void> _onMapCreated(GoogleMapController controller) async {
     print("Test1");
     for(int i1=0;i1<widget.listOfLatAndLong.length;i1++){
+      var actSts;
       print(widget.listOfLatAndLong[i1]["Latitude"]);
       print(".........");
       print(widget.listOfLatAndLong[i1]["Longitude"]);
+      print(".........");
+      print(widget.activationStatus[i1]);
       myList.add({
         "lat":widget.listOfLatAndLong[i1]["Latitude"],
         "lng":widget.listOfLatAndLong[i1]["Longitude"],
-        "name":widget.resultOfGreenHouseName[i1]
+        "name":widget.resultOfGreenHouseName[i1],
+        "Status_Activation": widget.activationStatus[i1]
         });
     }
     _markers.clear();
     setState(() {
       for (int i = 0; i < myList.length; i++) {
-        print("For Loop");
         final marker = Marker(
           markerId: MarkerId(myList[i]['name']),
           position: LatLng(myList[i]['lat'], myList[i]['lng']),
           infoWindow: InfoWindow(
               title: myList[i]['name'],
-              snippet: "Click here",
+              snippet: 'Activate: ${myList[i]['Status_Activation'].toString()}',
               onTap: () {
                 print("${myList[i]['name']}");
                 print("${myList[i]['lat']}, ${myList[i]['lng']}");
@@ -94,7 +108,7 @@ class _MapScreenState extends State<MapScreen> {
                           Homemodel2pageScreen("", widget.tokenOfUser, "","")));
             },
             // onPressed: _goToAgronoMek(context),
-            label: Text('To AgronoMek!'),
+            label: Text('To Dashboard!'),
             backgroundColor: ColorConstant.lightGreenA700,
             icon: Icon(Icons.warehouse_outlined),
           ),

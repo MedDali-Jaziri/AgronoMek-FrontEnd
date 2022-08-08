@@ -361,4 +361,9 @@ class ImageConstant {
 
   static String imgProfilecopy = 'assets/images/img_profilecopy.svg';
 
+
+  //
+  static const String cloudyAnim = 'assets/anims/cloudy.json';
+  static const String cloudyMain = 'assets/anims/cloudy_main.json';
+
 }

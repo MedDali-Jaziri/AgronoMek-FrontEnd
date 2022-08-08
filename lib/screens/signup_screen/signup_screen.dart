@@ -761,11 +761,11 @@ class SignupScreen extends GetWidget<SignupController> {
     var password = this.controller.enteryourPassController.text;
     var passwordConfirmation = this.controller.enteryourPassController1.text;
 
-    var urlAddUser = Uri.parse('http://37.59.204.222/api/user/addUser/');
+    var urlAddUser = Uri.parse('http://37.59.204.222:85/api/user/addUser/');
     var urlAddNotification =
-        Uri.parse('http://37.59.204.222/api/notification/addNotification/');
+        Uri.parse('http://37.59.204.222:85/api/notification/addNotification/');
     var urlSendVerificationLink =
-        Uri.parse('http://37.59.204.222/api/notification/sendVerificationLink');
+        Uri.parse('http://37.59.204.222:85/api/notification/sendVerificationLink');
 
     // var country="";
 
