@@ -45,7 +45,7 @@ class ProfileUpdateScreen extends GetWidget<ProfileUpdateController> {
         var tokenRe = Get.arguments['token'];
         print(tokenRe);
         var urlSendForInformationUser =
-            Uri.parse('http://37.59.204.222/api/user/getAllInformationOfUser/');
+            Uri.parse('http://37.59.204.222:85/api/user/getAllInformationOfUser/');
 
         var responseOfInformationUser = await http
             .post(urlSendForInformationUser, body: {'tokenId': tokenRe});
@@ -191,7 +191,7 @@ class ProfileUpdateScreen extends GetWidget<ProfileUpdateController> {
                                                                                                     child: ClipRRect(
                                                                                                         borderRadius: BorderRadius.circular(getHorizontalSize(36.00)),
                                                                                                         child: Obx(() => Image(
-                                                                                                              image: NetworkImage('http://37.59.204.222/${this.controller.imageUser.value}'),
+                                                                                                              image: NetworkImage('http://37.59.204.222:85/${this.controller.imageUser.value}'),
                                                                                                               height: getSize(72.00),
                                                                                                               width: getSize(72.00),
                                                                                                               fit: BoxFit.fill,
@@ -590,7 +590,7 @@ class ProfileUpdateScreen extends GetWidget<ProfileUpdateController> {
                                                   'image', 'png'));
 
                                           var urlSendUpdateProfile = Uri.parse(
-                                              'http://37.59.204.222/api/user/UpdateUser');
+                                              'http://37.59.204.222:85/api/user/UpdateUser');
 
                                           var requestUpdateUser =
                                               http.MultipartRequest(

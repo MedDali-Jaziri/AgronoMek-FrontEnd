@@ -26,6 +26,8 @@ import 'package:agronomek_app/screens/reset_password_screen/reset_password_scree
 import 'package:agronomek_app/screens/signup_screen/binding/signup_binding.dart';
 import 'package:agronomek_app/screens/signup_screen/signup_screen.dart';
 import 'package:agronomek_app/screens/tempandhum_screen/TempAndHumScreen.dart';
+import 'package:agronomek_app/screens/weatherReport_screen/binding/WeatherBinding.dart';
+import 'package:agronomek_app/screens/weatherReport_screen/weather_report_screen.dart';
 
 
 class AppRoutes {
@@ -56,6 +58,8 @@ class AppRoutes {
   static String profileUpdateScreen = '/profileUpdateScreen';
 
   static String tempAndHumScreen = '/tempAndHumScreen';
+
+  static String weatherReportScreen = '/weatherReportScreen';
 
   static String initialRoute = '/initialRoute';
   
@@ -152,8 +156,15 @@ class AppRoutes {
       ]
     ),
     GetPage(
+      name: weatherReportScreen,
+      page: () => WeatherReportScreen(),
+      bindings: [
+        WeatherReportBinding(),
+      ]
+    ),
+    GetPage(
       name: initialRoute,
-      page: () => LoginScreen("", ""),
+      page: () => LoginScreen("",""),
       bindings: [
         LoginBinding(),
       ],

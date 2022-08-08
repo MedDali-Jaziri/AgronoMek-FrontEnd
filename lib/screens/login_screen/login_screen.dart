@@ -704,7 +704,7 @@ class LoginScreen extends GetWidget<LoginController> {
     var email = this.controller.enteryourEmaiController.text;
     var password = this.controller.enteryourpasswordController.text;
     var urlSendLoginUser =
-        Uri.parse('http://37.59.204.222/api/user/loginUser/');
+        Uri.parse('http://37.59.204.222:85/api/user/loginUser/');
 
     if (email.isEmpty == true || password == true) {
       CoolAlert.show(
@@ -726,15 +726,18 @@ class LoginScreen extends GetWidget<LoginController> {
         final String token = body['token'];
 
         var urlSendInfoPosition = Uri.parse(
-            'http://37.59.204.222/api/greenHouse/getLatAndLongOfOneUser');
+            'http://37.59.204.222:85/api/greenHouse/getLatAndLongOfOneUser');
 
         var responseInfoPosition =
             await http.post(urlSendInfoPosition, body: {'tokenId': token});
 
         if (responseInfoPosition.statusCode == 200) {
           final body2 = json.decode(responseInfoPosition.body);
+          print("Test body2");
+          print(body2);
           var resultOfPosition = body2['Result'];
           var resultOfGreenHouseName = body2['Id_AgronoMek'];
+          var activationStatus = body2['Status_Activation'];
           print('The list of greenHouses: .${resultOfGreenHouseName}}');
           var varLogin = "Login";
           // Navigator.push(
@@ -749,7 +752,9 @@ class LoginScreen extends GetWidget<LoginController> {
                     varLogin: varLogin,
                     tokenOfUser: token,
                     listOfLatAndLong: resultOfPosition,
-                    resultOfGreenHouseName:resultOfGreenHouseName)));
+                    resultOfGreenHouseName:resultOfGreenHouseName,
+                    activationStatus: activationStatus
+                    )));
           this.controller.enteryourEmaiController.clear();
           this.controller.enteryourpasswordController.clear();
         }

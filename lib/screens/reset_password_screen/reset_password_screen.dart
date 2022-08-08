@@ -263,7 +263,7 @@ class ResetPasswordScreen extends GetWidget<ResetPasswordController> {
     print("Send the code the email");
     var resultOfForegetPassword = "";
     var urlSendForgetPassword =
-        Uri.parse('http://37.59.204.222/api/user/forgetPassword');
+        Uri.parse('http://37.59.204.222:85/api/user/forgetPassword');
 
     var email = this.controller.enteryouremaiController.text;
     print(email);
