@@ -840,6 +840,7 @@ class SignupScreen extends GetWidget<SignupController> {
         requestAddUser.fields['password'] = password;
         requestAddUser.fields['country'] = 'Tunisia';
         requestAddUser.fields['connectedToGreenHouse'] = 'false';
+        requestAddUser.fields['role'] = 'Client';
         // requestAddUser.fields['idGreenHouse'] = '';
         
 

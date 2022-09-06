@@ -45,8 +45,10 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
     final data = jsonDecode(jsonEncode(event.snapshot.value));
     print(data["Temperature"]);
     print(data["Humidity"]);
+    print(data["Ventillation"]);
     list.add(data["Temperature"]);
     list.add(data["Humidity"]);
+    list.add(data["Ventillation"]);
     return list;
   }
 
@@ -59,10 +61,20 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
       print("The value of String !!");
       print(value[0]);
       print(value[1]);
-      if(value[0]>=25){
+      print(value[2]);
+
+      if(value[0]>=25 && value[2]==false){
         CoolAlert.show(context: context,
         type: CoolAlertType.info,
         text: "You should turn on your ventilator");
+      }
+      if(value[2]==true){
+        this.powerOnVentiolo = false;
+        this.powerOffVentiolo = true;
+      }
+      else{
+        this.powerOnVentiolo = true;
+        this.powerOffVentiolo = false;
       }
       isLoading = true;
       _DashboardInit(value[0].toDouble(), value[1].toDouble());
@@ -115,24 +127,24 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Text("RealTime Temperature and Humidity \n in ${widget.idGreenHouse}",  overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,style:AppStyle.textstylerobotocondensedregular25HomePageModel2.copyWith(fontSize: getFontSize(20))),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: FloatingActionButton(
-                            onPressed: () async{
-                              _databaseReference = FirebaseDatabase.instance.ref('AgronoMekDB/${widget.idGreenHouse}');
+                          // Align(
+                          //   alignment: Alignment.topRight,
+                          //   child: FloatingActionButton(
+                          //   onPressed: () async{
+                          //     _databaseReference = FirebaseDatabase.instance.ref('AgronoMekDB/${widget.idGreenHouse}');
 
-                              await _databaseReference.update({
-                                "Ventillation": false
-                              });
-                            },
-                            child: Icon(
-                              Icons.power_off_rounded,
-                              color: Colors.redAccent,
-                            ),
-                            backgroundColor: Colors.white70,
-                            splashColor: Colors.amber,
-                          )
-                          ),
+                          //     await _databaseReference.update({
+                          //       "Ventillation": false
+                          //     });
+                          //   },
+                          //   child: Icon(
+                          //     Icons.power_off_rounded,
+                          //     color: Colors.redAccent,
+                          //   ),
+                          //   backgroundColor: Colors.white70,
+                          //   splashColor: Colors.amber,
+                          // )
+                          // ),
                           CustomPaint(
                             foregroundPainter:
                                 CircleProgress(tempAnimation.value, true),
@@ -189,7 +201,9 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
                               ),
                             ),
                           ), 
-                          SlideAction(
+                          Visibility(
+                            visible: powerOnVentiolo,
+                            child: SlideAction(
                             onSubmit: (() async{
                              _databaseReference = FirebaseDatabase.instance.ref('AgronoMekDB/${widget.idGreenHouse}');
 
@@ -206,7 +220,28 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
                             reversed: false,
                             sliderButtonIcon: Icon(Icons.wind_power_sharp),
                           )
-                        
+                          ),
+                          Visibility(
+                            visible: powerOffVentiolo,
+                            child: SlideAction(
+                            onSubmit: (() async{
+                             _databaseReference = FirebaseDatabase.instance.ref('AgronoMekDB/${widget.idGreenHouse}');
+
+                              await _databaseReference.update({
+                                "Ventillation": false
+                              });
+                            }),
+                            text: "Slide to power off ",
+                            innerColor: Colors.redAccent,
+                            outerColor: ColorConstant.gray500,
+                            elevation: 3,
+                            borderRadius: 25,
+                            alignment: Alignment.center,
+                            reversed: true,
+                            sliderButtonIcon: Icon(
+                              Icons.power_off_rounded),
+                          )
+                          )                      
                         ],
                       )
                     : Text(
@@ -218,3 +253,4 @@ class _TempAndHumScreenState extends State<TempAndHumScreen>
         ));
   }
 }
+

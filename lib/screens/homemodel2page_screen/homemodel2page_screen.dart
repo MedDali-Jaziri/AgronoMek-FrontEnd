@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:agronomek_app/core/app_export.dart';
+import 'package:agronomek_app/screens/day-light_screen/day-light_screen.dart';
 import 'package:agronomek_app/screens/homemodel2page_screen/models/homemodel2page_model.dart';
 import 'package:agronomek_app/screens/homepage_screen/homepage_screen.dart';
 import 'package:agronomek_app/screens/leafdiseases_screen/leaf_diseases_screen.dart';
@@ -11,6 +12,7 @@ import 'package:agronomek_app/screens/water_screen/WaterScreen.dart';
 import 'package:agronomek_app/screens/weatherReport_screen/binding/WeatherBinding.dart';
 import 'package:agronomek_app/screens/weatherReport_screen/weather_report_screen.dart';
 import 'package:agronomek_app/theme/app_style.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import 'controller/homemodel2page_controller.dart';
@@ -37,8 +39,8 @@ class Homemodel2pageScreen extends GetView {
   var valueOfTemp = "";
   var valueOfHum = "";
   var urlImage = "";
-  final Uri _url = Uri.parse('https://flutter.dev');
-  
+  final Uri _url = Uri.parse('http://102.156.152.52:5000/video_feed');
+
   @override
   Widget build(BuildContext context) {
     final Homemodel2pageController homemodel2pageController =
@@ -302,7 +304,9 @@ class Homemodel2pageScreen extends GetView {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    DateFormat.yMMMEd().format(DateTime.now()).toString(),
+                                                    DateFormat.yMMMEd()
+                                                        .format(DateTime.now())
+                                                        .toString(),
                                                     // DateTime.now().toString(),
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -1788,30 +1792,39 @@ class Homemodel2pageScreen extends GetView {
                                                           ),
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left:
-                                                              getHorizontalSize(
-                                                            47.00,
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          print("Go to the Brightness screen !!!!!!!");
+                                                          Navigator.push(context, MaterialPageRoute(
+                                                            builder: (context) => DayNightScreen(idGreenHouse: this.idGreenHouse)
+                                                          ));
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            left:
+                                                                getHorizontalSize(
+                                                              47.00,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        child: Text(
-                                                          "Brightness",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: AppStyle
-                                                              .textstyleamaranthregular20HomePageModel2
-                                                              .copyWith(
-                                                            fontSize:
-                                                                getFontSize(
-                                                              20,
+                                                          child: Text(
+                                                            "Brightness",
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: AppStyle
+                                                                .textstyleamaranthregular20HomePageModel2
+                                                                .copyWith(
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                20,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
+                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -2507,7 +2520,9 @@ class Homemodel2pageScreen extends GetView {
                                                               var resultOfGreenHouseName =
                                                                   body2[
                                                                       'Id_AgronoMek'];
-                                                              var activationStatus = body2['Status_Activation'];
+                                                              var activationStatus =
+                                                                  body2[
+                                                                      'Status_Activation'];
                                                               Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
@@ -2520,8 +2535,8 @@ class Homemodel2pageScreen extends GetView {
                                                                               resultOfPosition,
                                                                           resultOfGreenHouseName:
                                                                               resultOfGreenHouseName,
-                                                                          activationStatus: activationStatus
-                                                                              )));
+                                                                          activationStatus:
+                                                                              activationStatus)));
                                                             } else {
                                                               Navigator.push(
                                                                   context,
@@ -2535,7 +2550,8 @@ class Homemodel2pageScreen extends GetView {
                                                                               "",
                                                                           resultOfGreenHouseName:
                                                                               "",
-                                                                          activationStatus: "")));
+                                                                          activationStatus:
+                                                                              "")));
                                                             }
                                                           },
                                                           child: Padding(
