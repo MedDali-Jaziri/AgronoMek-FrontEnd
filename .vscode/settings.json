@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "الله"
-    ]
+    ],
+    "cmake.sourceDirectory": "${workspaceFolder}/linux"
 }

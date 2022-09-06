@@ -64,13 +64,13 @@ class AppRoutes {
   static String initialRoute = '/initialRoute';
   
   static List<GetPage> pages = [
-    GetPage(
-      name: loadingScreen,
-      page: () => PageLoadingScreen(),
-      bindings: [
-        PageLoadingBinding(),
-      ],
-    ),
+    // GetPage(
+    //   name: loadingScreen,
+    //   page: () => PageLoadingScreen(),
+    //   bindings: [
+    //     PageLoadingBinding(),
+    //   ],
+    // ),
     GetPage(
       name: boarding1Screen,
       page: () => Onboarding1Screen(),
@@ -164,9 +164,9 @@ class AppRoutes {
     ),
     GetPage(
       name: initialRoute,
-      page: () => LoginScreen("",""),
+      page: () => Onboarding1Screen(),
       bindings: [
-        LoginBinding(),
+        Onboarding1Binding(),
       ],
     ),
   ];

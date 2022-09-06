@@ -45,6 +45,8 @@ dependencies:
   syncfusion_flutter_charts: ^19.4.47
   intl: ^0.17.0
   dio: ^4.0.4
+  flutter_launcher_icons: ^0.10.0
+  day_night_switcher: ^0.2.0+1
 
 dev_dependencies:
   flutter_test:
@@ -52,15 +54,19 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/AgronoMek-Logo.png"
+
 flutter:
-
   uses-material-design: true
-
   assets:
     - assets/
     - assets/anims/
     - assets/images/
     - assets/images/AgronoMek.png
+    - assets/images/AgronoMek-Logo.png
    
   fonts:
     - family: Roboto Slab
